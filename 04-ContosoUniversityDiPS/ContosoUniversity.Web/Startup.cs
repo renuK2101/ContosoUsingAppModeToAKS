@@ -60,7 +60,8 @@ namespace ContosoUniversity
             }
             else if (env.IsProduction())
             {
-                // app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
+                // Uncomment if using HSTS: app.UseHsts();
             }
 
             // aspnetcore 2.1 Require HTTPS
@@ -74,8 +75,19 @@ namespace ContosoUniversity
             }
 
             app.UseStaticFiles();
+            
+            app.UseRouting();  // Enable endpoint routing
+            
             app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
+            app.UseAuthorization();  // Add authorization middleware
+            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();  // Map Razor Pages
+                endpoints.MapControllerRoute(  // Map MVC controllers if you have any
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

@@ -20,4 +20,7 @@
   <ItemGroup>
     <Content Update="appsettings*.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\jquery\dist\" />
+  </ItemGroup>
 </Project>

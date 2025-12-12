@@ -67,5 +67,19 @@ namespace ContosoUniversity.Common
         {
             _context.SaveChanges();
         }
+
+        public void ApplicationContextConfig(ModelBuilder modelBuilder, string schema = "")
+        {
+            modelBuilder.Entity<Course>().ToTable("Course", schema);
+            modelBuilder.Entity<Enrollment>().ToTable("Enrollment", schema);
+            // Remove these two lines to use TPH:
+            // modelBuilder.Entity<Student>().ToTable("Student", schema);
+            // modelBuilder.Entity<Instructor>().ToTable("Instructor", schema);
+            modelBuilder.Entity<Department>().ToTable("Department", schema);
+            modelBuilder.Entity<OfficeAssignment>().ToTable("OfficeAssignment", schema);
+            modelBuilder.Entity<CourseAssignment>().ToTable("CourseAssignment", schema);
+            modelBuilder.Entity<Person>().ToTable("Person", schema);
+            modelBuilder.Entity<CourseAssignment>().HasKey(c => new { c.CourseID, c.InstructorID });
+        }
     }
 }

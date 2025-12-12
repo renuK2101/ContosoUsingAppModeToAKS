@@ -240,13 +240,13 @@ namespace ContosoUniversity.Common.Data
         {
             try
             {
-                return query.Count() > 0;
+                return query.   Count() > 0;
             }
             catch (Microsoft.Data.SqlClient.SqlException)
             {
                 // Table doesn't exist yet, so it's definitely not initialized
                 return false;
             }
-        }
+        }   
     }
 }

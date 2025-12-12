@@ -10,15 +10,23 @@ namespace ContosoUniversity.Data.DbContexts
         {
             modelBuilder.Entity<Course>().ToTable("Course", schema);
             modelBuilder.Entity<Enrollment>().ToTable("Enrollment", schema);
-            modelBuilder.Entity<Student>().ToTable("Student", schema);
             modelBuilder.Entity<Department>().ToTable("Department", schema);
-            modelBuilder.Entity<Instructor>().ToTable("Instructor", schema);
             modelBuilder.Entity<OfficeAssignment>().ToTable("OfficeAssignment", schema);
             modelBuilder.Entity<CourseAssignment>().ToTable("CourseAssignment", schema);
-            modelBuilder.Entity<Person>().ToTable("Person", schema);
+            
+            // Configure TPH inheritance with string discriminator
+            modelBuilder.Entity<Person>()
+                .ToTable("Person", schema)
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<Student>("Student")
+                .HasValue<Instructor>("Instructor")
+                .HasValue<Person>("Person");
+            
             modelBuilder.Entity<CourseAssignment>().HasKey(c => new { c.CourseID, c.InstructorID });
         }
-
+        
+        public DbContextConfig() { }
+        
         public void SecureApplicationContextConfig(ModelBuilder modelBuilder, string schema = "")
         {
             modelBuilder.Entity<ApplicationUser>().ToTable("Users", schema);
