@@ -64,8 +64,9 @@ namespace ContosoUniversity.Common
             }
 
             services.AddScoped<UnitOfWork<ApplicationContext>, UnitOfWork<ApplicationContext>>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<,>));
-
+            // Note: Repository<T, TContext> cannot be registered generically as IRepository<T> 
+            // because it requires two type parameters. Use UnitOfWork pattern for repository access.
+            
             services.Configure<SampleData>(configuration.GetSection("SampleData"));
 
             return services;
