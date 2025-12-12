@@ -27,7 +27,7 @@ namespace ContosoUniversity
         {
             config.SetBasePath(Directory.GetCurrentDirectory());
 
-            if (context.HostingEnvironment.IsDevelopment())
+            if (Microsoft.Extensions.Hosting.HostEnvironmentEnvExtensions.IsDevelopment(context.HostingEnvironment))
             {
                 config.AddJsonFile($"sampleData.json", optional: true, reloadOnChange: false);
                 config.AddUserSecrets<Startup>();
