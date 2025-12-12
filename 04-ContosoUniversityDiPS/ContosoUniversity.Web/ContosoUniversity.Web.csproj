@@ -6,7 +6,6 @@
   <ItemGroup>
     <None Remove="Properties\PublishProfiles\Azure.pubxml" />
     <PackageReference Include="BundlerMinifier.Core" Version="2.9.406" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Pages\About.cshtml.cs" />
