@@ -32,7 +32,7 @@ namespace ContosoUniversity.Api
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
 
-            if (context.HostingEnvironment.IsDevelopment())
+            if (string.Equals(context.HostingEnvironment.EnvironmentName, "Development", System.StringComparison.OrdinalIgnoreCase))
             {
                 config.AddJsonFile($"sampleData.json", optional: false, reloadOnChange: false);
                 config.AddUserSecrets<Startup>();
