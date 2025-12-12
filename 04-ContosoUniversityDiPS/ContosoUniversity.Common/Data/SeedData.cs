@@ -236,6 +236,17 @@ namespace ContosoUniversity.Common.Data
             _unitOfWork.Commit();
         }
 
-        private bool IsInitialized(IQueryable<BaseEntity> query) => query.Count() > 0;
+        private bool IsInitialized(IQueryable<BaseEntity> query)
+        {
+            try
+            {
+                return query.Count() > 0;
+            }
+            catch (Microsoft.Data.SqlClient.SqlException)
+            {
+                // Table doesn't exist yet, so it's definitely not initialized
+                return false;
+            }
+        }
     }
 }

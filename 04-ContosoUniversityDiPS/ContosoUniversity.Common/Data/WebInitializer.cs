@@ -45,10 +45,20 @@ namespace ContosoUniversity.Common.Data
 
         private void InitializeContext()
         {
-            // create database schema if it does not exist
-            if (_webContext.Database.EnsureCreated())
+            try
             {
-                _logger.LogInformation("Creating database schema...");
+                // Try to apply migrations if they exist
+                _logger.LogInformation("Applying database migrations...");
+                _webContext.Database.Migrate();
+            }
+            catch (System.Exception ex)
+            {
+                // If migrations don't exist or fail, ensure database is created
+                _logger.LogWarning($"Migration failed or doesn't exist: {ex.Message}. Using EnsureCreated instead.");
+                if (_webContext.Database.EnsureCreated())
+                {
+                    _logger.LogInformation("Creating database schema using EnsureCreated...");
+                }
             }
 
             var unitOfWork = new UnitOfWork<WebContext>(_webContext);
