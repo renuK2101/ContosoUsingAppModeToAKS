@@ -1,0 +1,70 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  ACR_NAME: acrrencontosouniversitydevpgp392
+  ACR_LOGIN_SERVER: acrrencontosouniversitydevpgp392.azurecr.io
+  IMAGE_NAME: contoso-university
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Login to ACR
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                     -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest \
+                     -f Dockerfile .
+        docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+    
+    outputs:
+      image-tag: ${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+    
+    - name: Set up kubeconfig (Manual)
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+    
+    - name: Deploy to AKS
+      run: |
+        # Update image in deployment
+        sed -i "s|image:.*contoso-university.*|image: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image-tag }}|g" k8s/deployment.yaml
+        
+        # Apply deployment
+        kubectl apply -f k8s/deployment.yaml
+        
+        # Wait for rollout
+        kubectl rollout status deployment/contoso-university --timeout=5m
+    
+    - name: Get Application URL
+      run: |
+        echo "Application deployed successfully!"
+        EXTERNAL_IP=$(kubectl get service contoso-university-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        echo "Application URL: http://$EXTERNAL_IP"
