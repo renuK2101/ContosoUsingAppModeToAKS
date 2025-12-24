@@ -1,0 +1,40 @@
+﻿# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+
+# Terraform
+**/.terraform/
+**/.terraform.*
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+tfplan
+
+# Node
+node_modules/
+npm-debug.log
+
+# Secrets and sensitive files
+kubeconfig-base64.txt
+*.pfx
+*.publishsettings
+
+# Temporary files
+temp-build/
+*.tmp
+*.log
+
+# Azure
+PublishProfiles/
+*.pubxml
+*.azurePubxml
